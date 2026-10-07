@@ -1,0 +1,60 @@
+# golangci-lint configuration for zdb.
+#
+# The three readability linters are the point of this file: wsl_v5 keeps blocks
+# from cuddling against unrelated statements, nlreturn keeps a return separated
+# from the work before it, and whitespace rejects the blank line at the top or
+# bottom of a block. Everything after them is ordinary hygiene.
+#
+# Verified against golangci-lint 2.14.0.
+version: "2"
+
+run:
+  timeout: 5m
+
+issues:
+  # The defaults cap reporting at 50 issues per linter and 3 per identical
+  # message, which silently hides the 4th, 5th and 6th occurrence of the same
+  # problem. Six unchecked Munmap calls in writer.go read as three that way, and
+  # a linter that under-reports is worse than no linter.
+  max-issues-per-linter: 0
+  max-same-issues: 0
+
+linters:
+  # govet, errcheck, staticcheck, ineffassign, unused.
+  default: standard
+  enable:
+    # --- spacing between blocks ---
+    - wsl_v5 # "while cuddled" rules: an if only cuddles if it uses the variables above it.
+    - nlreturn # blank line before return/break/continue.
+    - whitespace # no leading or trailing newline inside a block.
+    - godot # comments end in a period.
+
+    # --- correctness and best practice ---
+    - gocritic # correctness + style checks the compiler does not do.
+    - errorlint # errors.Is/As instead of == and type assertion.
+    - revive # exported doc comments, naming, early return.
+    - unconvert # pointless conversions.
+    - unparam # a parameter that is always the same value.
+    - misspell
+    - dupword
+    - nakedret
+    - forcetypeassert
+    - usestdlibvars
+
+  exclusions:
+    presets:
+      - std-error-handling
+      - common-false-positives
+    rules:
+      # Tests are allowed to be long and to ignore errors in setup.
+      - path: _test\.go
+        linters:
+          - errcheck
+          - unparam
+          - gocritic
+
+formatters:
+  enable:
+    - gofmt
+    - gofumpt
+    - goimports

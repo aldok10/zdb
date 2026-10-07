@@ -1,0 +1,35 @@
+# Test and profiling binaries. `go test -c`, `go test -cover -o`, and anything
+# built into the working tree.
+*.test
+*.exe
+*.out
+coverage.out
+coverage.html
+
+# Profiles from `go test -memprofile` and friends. These are written into the
+# package directory by the benchmarks in AGENTS.md section 11.
+*.prof
+*.pprof
+mem.out
+cpu.out
+
+# Go workspace files. A library should never check one in; it pins a developer's
+# local checkout paths and breaks for everyone else.
+go.work
+go.work.sum
+
+# Build output. `go build ./...` in this module writes nothing, so this only
+# catches a stray `go build -o`.
+/bin/
+/dist/
+
+# Editor and OS cruft.
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Local scratch. AGENTS.md section 11 measures descriptor counts by writing
+# throwaway modules under /tmp, and those must never be added here by accident.
+*.tmp
